@@ -280,11 +280,11 @@ function reward = compute_reward(state_struct, action_struct, params)
     buffer_penalty_val = 0;
     % 对缓冲区过低进行惩罚
     if avg_buffer_level < params.buffer_min
-        buffer_penalty_val = params.beta * (params.buffer_min - avg_buffer_level) * 50; % 较强的惩罚
+        buffer_penalty_val = params.beta * (params.buffer_min - avg_buffer_level) * 5; % 较强的惩罚
     end
     % 对缓冲区溢出进行惩罚 (虽然有消耗速率，但仍可能发生)
     if avg_buffer_level > params.buffer_max 
-        buffer_penalty_val = buffer_penalty_val + params.beta * (avg_buffer_level - params.buffer_max) * 10;
+        buffer_penalty_val = buffer_penalty_val + params.beta * (avg_buffer_level - params.buffer_max) * 2;
     end
     
     % 3. 功耗相关的惩罚部分
@@ -306,10 +306,10 @@ function reward = compute_reward(state_struct, action_struct, params)
 
     % 如果有效速率 (考虑BLER后) 低于所需速率
     if required_rate_for_chosen_layer > capacity_at_chosen_mcs_worst_channel * (1 - bler_at_chosen_mcs_worst_channel)
-        transmission_penalty = 200; % 对选择不可持续的动作给予严重惩罚
+        transmission_penalty = 2; % 对选择不可持续的动作给予严重惩罚
     % 或者，如果名义容量 (不考虑BLER) 就低于所需速率
     elseif required_rate_for_chosen_layer > capacity_at_chosen_mcs_worst_channel
-        transmission_penalty = 100; % 仍然是显著的惩罚
+        transmission_penalty = 1; % 仍然是显著的惩罚
     end
     
     % 总奖励 = 质量奖励 - 缓冲区惩罚 - 功耗惩罚 - 传输惩罚
